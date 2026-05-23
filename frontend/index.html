@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOAZ E-Commerce Recommendation</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="global-header">
+        <div class="container header-inner">
+            <div class="header-left">
+                <button class="hamburger-btn">☰</button>
+                <a href="index.html" class="logo">B.Wear</a>
+                <nav class="category-nav">
+                    <a href="#">Upper</a>
+                    <a href="#">Lower</a>
+                    <a href="#">Shoes</a>
+                    <a href="#">Accessories</a>
+                    <a href="#">Swimwear</a>
+                    <a href="#">Nightwear</a>
+                    <a href="#">Socks&Tights</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn">⚲ 검색</button>
+                <button class="icon-btn">♡ 좋아요</button>
+                <button class="icon-btn">👤 마이</button>
+                <a href="cart.html" class="icon-btn active" style="margin-right: 10px;">장바구니</a>
+                <button class="icon-btn login-btn">로그인 / 회원가입</button>
+            </div>
+        </div>
+        
+        <div class="container search-area">
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요">
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="main-banner">
+            <div class="banner-placeholder">
+                <img src="images/mainpage_banner.png" alt="최신 트렌드 기획전 배너">
+            </div>
+        </section>
+
+        <section class="recommendation-section">
+            <div class="section-header">
+                <h3 class="section-title">당신을 위한 추천</h3>
+                <a href="#" class="more-link">더보기</a>
+            </div>
+            <div id="personalized-recs" class="product-grid"></div>
+        </section>
+
+        <section class="recommendation-section">
+            <div class="section-header">
+                <h3 class="section-title">이런 상품은 어떠세요?</h3>
+                <a href="#" class="more-link">더보기</a>
+            </div>
+            <div id="general-recs" class="product-grid"></div>
+        </section>
+
+        <div id="scroll-anchor" class="scroll-anchor"></div>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/render.js"></script>
+</body>
+</html>

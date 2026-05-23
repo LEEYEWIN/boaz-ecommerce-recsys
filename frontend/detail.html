@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 상세 - BOAZ E-commerce</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="global-header">
+        <div class="container header-inner">
+            <div class="header-left">
+                <button class="hamburger-btn">☰</button>
+                <a href="index.html" class="logo">B.Wear</a>
+            </div>
+            <div class="header-right">
+                <a href="cart.html" class="icon-btn active" style="margin-right: 10px;">장바구니 🛒</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="detail-container">
+        <div class="detail-wrapper">
+            <div class="detail-left">
+                <img id="detail-image" src="" alt="Product Image">
+            </div>
+
+            <div class="detail-right">
+                <h1 id="detail-title">상품명 (prod_name)</h1>
+                <div id="detail-price" class="detail-price">₩0</div>
+                
+                <p id="detail-desc" class="detail-desc">
+                    상품에 대한 간략한 설명이 들어가는 자리입니다. (detail_desc)
+                </p>
+
+                <ul class="detail-meta">
+                    <li><strong>Category:</strong> <span id="detail-type">-</span></li>
+                    <li><strong>Material:</strong> <span id="detail-appearance">-</span></li>
+                    <li><strong>Color:</strong> <span id="detail-color">-</span></li>
+                </ul>
+
+                <button id="add-to-cart-btn" class="btn-add-cart">Add to Cart</button>
+            </div>
+        </div>
+
+        <section class="recommendation-section detail-recommendation">
+            <div class="section-header">
+                <h2 class="section-title">이런 상품은 어떠세요?</h2>
+            </div>
+            <div id="detail-recommend-list" class="product-grid"></div>
+        </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/render.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장바구니 - BOAZ 2차 프로젝트</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="global-header">
+        <div class="container header-inner">
+            <div class="header-left">
+                <button class="hamburger-btn">☰</button>
+                <a href="index.html" class="logo">BOAZ SHOP</a>
+                <nav class="category-nav">
+                    <a href="index.html">Home</a>
+                    <a href="#" class="disabled">New</a>
+                    <a href="#" class="disabled">Men</a>
+                    <a href="#" class="disabled">Women</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <a href="cart.html" class="icon-btn active">🛒 장바구니</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container cart-container">
+        <h1 class="cart-title">장바구니</h1>
+        
+        <div class="cart-control-bar">
+            <label class="select-all-label">
+                <input type="checkbox" id="chk-all" checked>
+                <span>전체 선택</span>
+            </label>
+            <button id="btn-delete-selected" class="btn-sub">선택 삭제</button>
+        </div>
+
+        <ul id="cart-item-list" class="cart-list">
+            </ul>
+
+        <div class="cart-summary-box">
+            <div class="price-row">
+                <span class="price-label">총 구매 금액</span>
+                <span class="price-value"><span id="total-price">0</span>원</span>
+            </div>
+            <button id="btn-buy-selected" class="btn-main">구매하기</button>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/cart.js"></script>
+</body>
+</html>
