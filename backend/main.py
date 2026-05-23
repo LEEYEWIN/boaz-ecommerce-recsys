@@ -35,18 +35,16 @@ r = redis.Redis(
     decode_responses=True,
 )
 
-# BigQuery에서 articles 로드
 print("articles 데이터 로드 중...")
 bq_client = bigquery.Client(project="boaz-ecommerce-rec")
 articles_df = bq_client.query("""
     SELECT article_id, prod_name, product_type_name,
            graphical_appearance_name, colour_group_name, detail_desc
-    FROM `boaz-ecommerce-rec.ecommerce_logs.article`
+    FROM `boaz-ecommerce-rec.ecommerce_logs.articles`
 """).to_dataframe()
 
 articles_df = articles_df.drop_duplicates(subset="article_id")
 articles_dict = articles_df.set_index("article_id").to_dict(orient="index")
-
 print(f"articles 로드 완료: {len(articles_dict)}개")
 
 
@@ -90,7 +88,6 @@ async def get_article(article_id: str):
         "graphical_appearance_name": info.get("graphical_appearance_name", ""),
         "colour_group_name":         info.get("colour_group_name", ""),
         "detail_desc":               info.get("detail_desc", ""),
-        "price":                     round(info.get("price", 0) * 1350),
         "image_url":                 image_url
     }
 

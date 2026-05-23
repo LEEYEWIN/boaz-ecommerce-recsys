@@ -1,4 +1,11 @@
-// 가격 및 할인율 랜덤 배정
+const SESSION_ID = sessionStorage.getItem("session_id") || (() => {
+    const id = crypto.randomUUID();
+    sessionStorage.setItem("session_id", id);
+    return id;
+})();
+
+const USER_ID = "45c20056-944b-40ce-84c5-62897512f922";
+
 function getRandomPriceData() {
     const min = 20000;
     const max = 150000;
@@ -11,7 +18,6 @@ function getRandomPriceData() {
     };
 }
 
-// 상품 카드 생성
 function createProductCard(product) {
     const card = document.createElement("div");
     card.className = "product-card";
@@ -39,11 +45,11 @@ function createProductCard(product) {
 
     card.onclick = () => {
         sendLog({
-            user_id: "test_user_456",
-            session_id: "test_session_123",
+            user_id:    USER_ID,
+            session_id: SESSION_ID,
             event_type: "click",
             article_id: product.article_id,
-            timestamp: new Date().toISOString()
+            timestamp:  new Date().toISOString()
         });
         window.location.href = `detail.html?id=${product.article_id}`;
     };
@@ -51,7 +57,6 @@ function createProductCard(product) {
     return card;
 }
 
-// 메인 추천 리스트 렌더링
 async function loadInitialProducts() {
     const pRecsContainer = document.getElementById("personalized-recs");
     const gRecsContainer = document.getElementById("general-recs");
@@ -61,8 +66,7 @@ async function loadInitialProducts() {
     pRecsContainer.innerHTML = "";
     gRecsContainer.innerHTML = "";
 
-    const userId = "45c20056-944b-40ce-84c5-62897512f922";
-    const mainData = await fetchMainRecommendations(userId);
+    const mainData = await fetchMainRecommendations(USER_ID);
     const articleIds = mainData.recommendations || [];
 
     if (articleIds.length > 0) {
@@ -90,7 +94,6 @@ async function loadInitialProducts() {
     }
 }
 
-// 무한 스크롤
 function setupInfiniteScroll() {
     const anchor = document.getElementById("scroll-anchor");
     if (!anchor) return;
@@ -116,7 +119,6 @@ function loadMoreProducts() {
     });
 }
 
-// 상세페이지 상품 정보 로드 — 실제 article_id 기반
 async function loadDetailInfo() {
     const params = new URLSearchParams(window.location.search);
     const articleId = params.get("id");
@@ -134,12 +136,21 @@ async function loadDetailInfo() {
                 this.src = "images/mainpage_banner.png";
             };
             document.getElementById("detail-title").textContent      = product.prod_name || "";
-            document.getElementById("detail-price").textContent = `₩${(Math.floor(Math.random() * 130000) + 20000).toLocaleString()}`;
+            document.getElementById("detail-price").textContent      = `₩${(Math.floor(Math.random() * 130000) + 20000).toLocaleString()}`;
             document.getElementById("detail-desc").textContent       = product.detail_desc || "";
             document.getElementById("detail-type").textContent       = product.product_type_name || "";
             document.getElementById("detail-appearance").textContent = product.graphical_appearance_name || "";
             document.getElementById("detail-color").textContent      = product.colour_group_name || "";
         }
+
+        // 클릭 로그 전송
+        sendLog({
+            user_id:    USER_ID,
+            session_id: SESSION_ID,
+            event_type: "click",
+            article_id: articleId,
+            timestamp:  new Date().toISOString()
+        });
 
         const addCartBtn = document.getElementById("add-to-cart-btn");
         if (addCartBtn) {
@@ -163,8 +174,8 @@ async function loadDetailInfo() {
                 localStorage.setItem("cart", JSON.stringify(cart));
 
                 sendLog({
-                    user_id:    "test_user_456",
-                    session_id: "test_session_123",
+                    user_id:    USER_ID,
+                    session_id: SESSION_ID,
                     event_type: "add_to_cart",
                     article_id: articleId,
                     timestamp:  new Date().toISOString()
@@ -180,13 +191,11 @@ async function loadDetailInfo() {
     }
 }
 
-// 상세페이지 하단 추천 리스트 — 실제 API 호출
 async function loadDetailRecommendations() {
     const recommendList = document.getElementById("detail-recommend-list");
     if (!recommendList) return;
 
-    const sessionId = "test_session_123";
-    const realtimeData = await fetchRealtimeRecommendations(sessionId);
+    const realtimeData = await fetchRealtimeRecommendations(SESSION_ID);
     const articleIds = realtimeData.recommendations || realtimeData.recommended_items || [];
 
     if (articleIds.length > 0) {
@@ -213,7 +222,6 @@ async function loadDetailRecommendations() {
     }
 }
 
-// 페이지 실행
 window.onload = () => {
     if (document.getElementById("detail-title")) {
         loadDetailInfo();

@@ -5,7 +5,7 @@ from collections import defaultdict
 
 KAFKA_BROKER    = "localhost:9092"
 FASTAPI_URL     = "http://localhost:8000/predict"
-SESSION_TIMEOUT = 30 * 60  # 30분 (테스트시 10으로 변경)
+SESSION_TIMEOUT = 10  # 30분 (테스트시 10으로 변경)
 
 consumer = KafkaConsumer(
     "user-log",
