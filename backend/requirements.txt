@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+redis
+kafka-python
+google-cloud-bigquery
+pandas
+python-dotenv
+torch
