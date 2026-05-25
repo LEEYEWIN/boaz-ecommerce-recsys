@@ -1,8 +1,8 @@
 const API_BASE_URL = "http://localhost:8000/api";
 
 async function sendLog(eventData) {
+    const ab_group = sessionStorage.getItem("ab_group") || "unknown";
     try {
-        const ab_group = sessionStorage.getItem("ab_group") || "unknown";
         fetch(`${API_BASE_URL}/log/event`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -31,7 +31,7 @@ function createProductCard(product) {
 
     card.innerHTML = `
         <div class="product-img-box">
-            <img src="${imageUrl}" 
+            <img src="${imageUrl}"
                  onerror="this.src='images/mainpage_banner.png'"
                  alt="${product.prod_name}">
         </div>
@@ -67,7 +67,7 @@ async function loadInitialProducts() {
     gRecsContainer.innerHTML = "";
 
     const mainData = await fetchMainRecommendations(USER_ID);
-    const articleIds = mainData.recommendations || [];
+    const articleIds = mainData.data || mainData.recommendations || [];
 
     if (articleIds.length > 0) {
         for (const articleId of articleIds.slice(0, 10)) {
@@ -143,7 +143,6 @@ async function loadDetailInfo() {
             document.getElementById("detail-color").textContent      = product.colour_group_name || "";
         }
 
-        // 클릭 로그 전송
         sendLog({
             user_id:    USER_ID,
             session_id: SESSION_ID,
@@ -196,7 +195,7 @@ async function loadDetailRecommendations() {
     if (!recommendList) return;
 
     const realtimeData = await fetchRealtimeRecommendations(SESSION_ID);
-    const articleIds = realtimeData.recommendations || realtimeData.recommended_items || [];
+    const articleIds = realtimeData.data || realtimeData.recommendations || realtimeData.recommended_items || [];
 
     if (articleIds.length > 0) {
         for (const articleId of articleIds.slice(0, 10)) {
