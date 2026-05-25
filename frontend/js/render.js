@@ -4,7 +4,7 @@ const SESSION_ID = sessionStorage.getItem("session_id") || (() => {
     return id;
 })();
 
-const USER_ID = "45c20056-944b-40ce-84c5-62897512f922";
+const USER_ID = new URLSearchParams(window.location.search).get("user_id") || "ea8715ba-355e-4410-91de-a95038cb4c5e";
 
 function getRandomPriceData() {
     const min = 20000;

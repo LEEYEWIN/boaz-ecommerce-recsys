@@ -2,10 +2,11 @@ const API_BASE_URL = "http://localhost:8000/api";
 
 async function sendLog(eventData) {
     try {
+        const ab_group = sessionStorage.getItem("ab_group") || "unknown";
         fetch(`${API_BASE_URL}/log/event`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(eventData)
+            body: JSON.stringify({ ...eventData, ab_group })
         });
     } catch (error) {
         console.error("Log 전송 실패:", error);
@@ -15,7 +16,9 @@ async function sendLog(eventData) {
 async function fetchMainRecommendations(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/recommend/main?user_id=${userId}`);
-        return await response.json();
+        const data = await response.json();
+        if (data.ab_group) sessionStorage.setItem("ab_group", data.ab_group);
+        return data;
     } catch (error) {
         console.error("메인 추천 조회 실패:", error);
         return { recommendations: [] };
