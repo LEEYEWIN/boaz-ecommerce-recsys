@@ -4,8 +4,7 @@ const SESSION_ID = sessionStorage.getItem("session_id") || (() => {
     return id;
 })();
 
-const USER_ID = "45c20056-944b-40ce-84c5-62897512f922";
-
+const USER_ID = new URLSearchParams(window.location.search).get("user_id") || "ea8715ba-355e-4410-91de-a95038cb4c5e";
 function getRandomPriceData() {
     const min = 20000;
     const max = 150000;
@@ -67,7 +66,7 @@ async function loadInitialProducts() {
     gRecsContainer.innerHTML = "";
 
     const mainData = await fetchMainRecommendations(USER_ID);
-    const articleIds = mainData.recommendations || [];
+    const articleIds = mainData.data || mainData.recommendations || [];
 
     if (articleIds.length > 0) {
         for (const articleId of articleIds.slice(0, 10)) {
@@ -143,7 +142,6 @@ async function loadDetailInfo() {
             document.getElementById("detail-color").textContent      = product.colour_group_name || "";
         }
 
-        // 클릭 로그 전송
         sendLog({
             user_id:    USER_ID,
             session_id: SESSION_ID,
@@ -196,7 +194,7 @@ async function loadDetailRecommendations() {
     if (!recommendList) return;
 
     const realtimeData = await fetchRealtimeRecommendations(SESSION_ID);
-    const articleIds = realtimeData.recommendations || realtimeData.recommended_items || [];
+    const articleIds = realtimeData.data || realtimeData.recommendations || realtimeData.recommended_items || [];
 
     if (articleIds.length > 0) {
         for (const articleId of articleIds.slice(0, 10)) {
