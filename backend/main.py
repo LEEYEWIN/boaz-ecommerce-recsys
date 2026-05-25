@@ -1,6 +1,8 @@
 import os
 import sys
 import json
+import uuid
+import time
 import redis
 import pandas as pd
 
@@ -59,6 +61,8 @@ class PredictRequest(BaseModel):
     sequence: list[SequenceItem]
 
 
+SESSION_TIMEOUT = 30 * 60  # 30분 (초 단위)
+
 class LogEvent(BaseModel):
     user_id: str
     session_id: str
@@ -106,34 +110,66 @@ async def predict_endpoint(req: PredictRequest):
     }
 
 
+def check_and_refresh_session(user_id: str, current_session_id: str) -> str:
+    last_event_key = f"{user_id}_last_event_time"
+    now = time.time()
+    last_event_time = r.get(last_event_key)
+
+    if last_event_time and (now - float(last_event_time)) > SESSION_TIMEOUT:
+        new_session_id = str(uuid.uuid4())
+        r.setex(last_event_key, SESSION_TIMEOUT * 2, str(now))
+        return new_session_id
+
+    r.setex(last_event_key, SESSION_TIMEOUT * 2, str(now))
+    return current_session_id
+
+
+def update_impression_clicked(session_id: str, article_id: str):
+    query = f"""
+        UPDATE `boaz-ecommerce-rec.ecommerce_logs.impression_log`
+        SET is_clicked = TRUE
+        WHERE session_id = '{session_id}' AND article_id = '{article_id}'
+    """
+    bq_client.query(query)
+
+
 @app.post("/api/log/event")
 async def log_event(event: LogEvent):
+    session_id = check_and_refresh_session(event.user_id, event.session_id)
+
+    if event.event_type == "click":
+        update_impression_clicked(session_id, event.article_id)
+
     log_data = {
-        "user_id": event.user_id,
-        "session_id": event.session_id,
+        "user_id":    event.user_id,
+        "session_id": session_id,
         "event_type": event.event_type,
         "article_id": event.article_id,
-        "timestamp": event.timestamp,
+        "timestamp":  event.timestamp,
     }
     send_log("user-log", log_data)
     print(f"Kafka 전송 완료: {event.article_id}")
-    return {"status": "ok"}
+    return {"status": "ok", "session_id": session_id}
 
 
 @app.get("/api/recommend/main")
 async def get_main_recommend(user_id: str):
-    redis_key = f"{user_id}_main"
-    cached = r.get(redis_key)
-    if cached:
-        return {
-            "user_id": user_id,
-            "recommendations": json.loads(cached),
-            "source": "redis"
-        }
+    ab_group = r.get(f"{user_id}_ab_group") or "B"
+
+    if ab_group == "A":
+        raw = r.get("global_popular")
+        recommendations = json.loads(raw) if raw else []
+        source = "popular"
+    else:
+        raw = r.get(f"{user_id}_main")
+        recommendations = json.loads(raw) if raw else []
+        source = "personalized"
+
     return {
-        "user_id": user_id,
-        "recommendations": [],
-        "message": "해당 유저 캐시 없음"
+        "user_id":        user_id,
+        "ab_group":       ab_group,
+        "recommendations": recommendations,
+        "source":         source
     }
 
 

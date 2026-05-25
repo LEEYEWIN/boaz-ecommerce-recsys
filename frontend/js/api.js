@@ -4,11 +4,13 @@ async function sendLog(eventData) {
     const ab_group     = sessionStorage.getItem("ab_group")     || "unknown";
     const persona_type = sessionStorage.getItem("persona_type") || "unknown";
     try {
-        fetch(`${API_BASE_URL}/log/event`, {
+        const response = await fetch(`${API_BASE_URL}/log/event`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...eventData, ab_group, persona_type })
         });
+        const data = await response.json();
+        if (data.session_id) sessionStorage.setItem("session_id", data.session_id);
     } catch (error) {
         console.error("Log 전송 실패:", error);
     }
