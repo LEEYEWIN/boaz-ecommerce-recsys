@@ -79,6 +79,13 @@ async function loadInitialProducts() {
                 console.error(e);
             }
         }
+        sendLog({
+            user_id:    USER_ID,
+            session_id: SESSION_ID,
+            event_type: "impression",
+            article_id: articleIds.slice(0, 10).join(","),
+            timestamp:  new Date().toISOString()
+        });
     }
 
     const generalIds = ["929866001", "767869001", "782758003", "880018003", "786307003",
@@ -124,6 +131,20 @@ async function loadDetailInfo() {
     const articleId = params.get("id");
 
     if (!articleId) return;
+
+    const enter_time = Date.now();
+    window.addEventListener("beforeunload", () => {
+        const dwell_time = Date.now() - enter_time;
+        if (dwell_time < 3000) return;
+        sendLog({
+            user_id:    USER_ID,
+            session_id: SESSION_ID,
+            event_type: "dwell",
+            article_id: articleId,
+            dwell_time: dwell_time,
+            timestamp:  new Date().toISOString()
+        });
+    });
 
     try {
         const res = await fetch(`http://localhost:8000/api/articles/${articleId}`);
